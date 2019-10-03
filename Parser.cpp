@@ -35,11 +35,13 @@ void Parser::Parse() {
   this->ParseDatalogProgram();
   catch (Tokens thrown) {
     cout << "Failure!" << endl << "\t" << thrown->ToString() << endl;
+    return
   }
+  cout << "Success!" << endl;
 }
 
 void Parser::ParseDatalogProgram() {
-  while (tknStack.top() != EndFile) {
+  do {
     if (tknStack.top() == tokens.front()->type) {
       tknStack.pop();
       tokens.pop();
@@ -56,22 +58,62 @@ void Parser::ParseDatalogProgram() {
           try{ throw tokens.front();} break;
       }
     }
-  }
+  } while (tknStack.top() != EndFile);
   if (tknStack.top() == EndFile && tokens.empty()==false) {
     try{ throw tokens.front(); }
   }
 }
 
 void Parser::ParseschemeList() {
-
+  tknStack.pop();
+  switch (tokens.front()) {
+    case ID:
+      tknStack.push(schemeList);
+      tknStack.push(scheme);
+      this->Parsescheme();
+      this->ParseschemeList();
+      break;
+    case Facts:
+      return;
+      break;
+    default:
+      try{ throw tokens.front();}
+      break;
+    }
 }
 
 void Parser::ParsefactList() {
-
+  tknStack.pop();
+  switch (tokens.front()) {
+    case ID:
+      tknStack.push(factList);
+      tknStack.push(fact);
+      this->Parsefact();
+      this->ParsefactList();
+      break;
+    case Rules:
+      return;
+      break;
+    default:
+      try{ throw tokens.front(); break;}
+  }
 }
 
 void Parser::ParseruleList() {
-
+  tknStack.pop();
+  switch (tokens.front()) {
+    case ID:
+      tknStack.push(ruleList);
+      tknStack.push(rule);
+      this->Parserule();
+      this->ParseruleList();
+      break;
+    case Queries:
+      return;
+      break;
+    default:
+      try{ throw tokens.front(); break;}
+  }
 }
 
 void Parser::ParsequeryList() {
@@ -85,7 +127,7 @@ void Parser::Parsescheme() {
   tknStack.push(ID);
   tknStack.push(LeftPar);
   tknStack.push(ID);
-  while (tknStack.top() != EndFile) {
+  do {
     if (tknStack.top() == tokens.front()->type) {
       tknStack.pop();
       tokens.pop();
@@ -97,32 +139,142 @@ void Parser::Parsescheme() {
           try{ throw tokens.front();} break;
       }
     }
-  }
+  } while (tknStack.top() != RigPar);
   if (tknStack.top() == EndFile && tokens.empty()==false) {
     try{ throw tokens.front(); }
   }
 }
 
 void Parser::Parsefact() {
-  if (tknStack.top()->type != ID) {
-    try{throw 1;}
+  tknStack.pop();
+  tknStack.push(Period);
+  tknStack.push(RigPar);
+  tknStack.push(stringList);
+  tknStack.push(String);
+  tknStack.push(LeftPar);
+  tknStack.push(ID);
+  do {
+    if (tknStack.top() == tokens.front()->type) {
+      tknStack.pop();
+      tokens.pop();
+    }
+    else {
+      switch (tknStack.top()) {
+        case idList: this->ParsestringList(); break;
+        default:
+          try{ throw tokens.front();} break;
+      }
+    }
+  } while (tknStack.top() != Period);
+  if (tknStack.top() == EndFile && tokens.empty()==false) {
+    try{ throw tokens.front(); }
   }
 }
 
 void Parser::Parserule() {
-
+  tknStack.pop();
+  tknStack.push(Period);
+  tknStack.push(predicateList);
+  tknStack.push(predicate);
+  tknStack.push(ColonDash);
+  tknStack.push(headPredicate);
+  do {
+    if (tknStack.top() == tokens.front()->type) {
+      tknStack.pop();
+      tokens.pop();
+    }
+    else {
+      switch (tknStack.top()) {
+        case headPredicate:
+          this->ParseheadPredicate();
+          break;
+        case predicate:
+          this->Parsepredicate();
+          break;
+        case predicateList:
+          this->ParsepredicateList();
+          break;
+        default:
+          try{ throw tokens.front();} break;
+      }
+    }
+  } while (tknStack.top() != Period);
+  if (tknStack.top() == EndFile && tokens.empty()==false) {
+    try{ throw tokens.front(); }
+  }
 }
 
 void Parser::Parsequery() {
-
+  tknStack.pop();
+  tknStack.push(QMark);
+  tknStack.push(predicate);
+  do {
+    if (tknStack.top() == tokens.front()->type) {
+      tknStack.pop();
+      tokens.pop();
+    }
+    else {
+      switch (tknStack.top()) {
+        case predicate: this->Parsepredicate(); break;
+        default:
+          try{ throw tokens.front();} break;
+      }
+    }
+  } while (tknStack.top() != QMark);
+  if (tknStack.top() == EndFile && tokens.empty()==false) {
+    try{ throw tokens.front(); }
+  }
 }
 
 void Parser::ParseheadPredicate() {
-
+  tknStack.pop();
+  tknStack.push(RigPar);
+  tknStack.push(idList);
+  tknStack.push(ID);
+  tknStack.push(LeftPar);
+  tknStack.push(ID);
+  do {
+    if (tknStack.top() == tokens.front()->type) {
+      tknStack.pop();
+      tokens.pop();
+    }
+    else {
+      switch (tknStack.top()) {
+        case idList: this->ParseidList(); break;
+        default:
+          try{ throw tokens.front();} break;
+      }
+    }
+  } while (tknStack.top() != RigPar);
+  if (tknStack.top() == EndFile && tokens.empty()==false) {
+    try{ throw tokens.front(); }
+  }
 }
 
 void Parser::Parsepredicate() {
-
+  tknStack.pop();
+  tknStack.push(RigPar);
+  tknStack.push(parameterList);
+  tknStack.push(parameter);
+  tknStack.push(LeftPar);
+  tknStack.push(ID);
+  do {
+    if (tknStack.top() == tokens.front()->type) {
+      tknStack.pop();
+      tokens.pop();
+    }
+    else {
+      switch (tknStack.top()) {
+        case parameter: this->Parseparameter(); break;
+        case parameterList: this->ParseparameterList(); break;
+        default:
+          try{ throw tokens.front();} break;
+      }
+    }
+  } while (tknStack.top() != RigPar);
+  if (tknStack.top() == EndFile && tokens.empty()==false) {
+    try{ throw tokens.front(); }
+  }
 }
 
 void Parser::ParsepredicateList() {
