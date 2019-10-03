@@ -57,6 +57,9 @@ void Parser::ParseDatalogProgram() {
       }
     }
   }
+  if (tknStack.top() == EndFile && tokens.empty()==false) {
+    try{ throw tokens.front(); }
+  }
 }
 
 void Parser::ParseschemeList() {
@@ -76,6 +79,12 @@ void Parser::ParsequeryList() {
 }
 
 void Parser::Parsescheme() {
+  tknStack.pop();
+  tknStack.push(RigPar);
+  tknStack.push(idList);
+  tknStack.push(ID);
+  tknStack.push(LeftPar);
+  tknStack.push(ID);
   while (tknStack.top() != EndFile) {
     if (tknStack.top() == tokens.front()->type) {
       tknStack.pop();
@@ -83,16 +92,14 @@ void Parser::Parsescheme() {
     }
     else {
       switch (tknStack.top()) {
-        case scheme: this->Parsescheme(); break;
-        case schemeList: this->ParseschemeList(); break;
-        case factList: this->ParsefactList(); break;
-        case ruleList: this->ParseruleList(); break;
-        case query: this->Parsequery(); break;
-        case queryList: this->ParsequeryList(); break;
+        case idList: this->ParseidList(); break;
         default:
           try{ throw tokens.front();} break;
       }
     }
+  }
+  if (tknStack.top() == EndFile && tokens.empty()==false) {
+    try{ throw tokens.front(); }
   }
 }
 
