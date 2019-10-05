@@ -14,6 +14,7 @@ public:
   Parser(vector<Tokens> tkns);
   ~Parser();
   void Parse();
+  void ParseDatalogProgram();
   void ParseschemeList();
   void ParsefactList();
   void ParseruleList();
@@ -31,4 +32,4 @@ public:
   void Parseparameter();
   void Parseexpression();
   void Parseoperator();
-}
+};

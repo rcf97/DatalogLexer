@@ -31,6 +31,7 @@ string Tokens::ToString() {
     case Comment: value += "COMMENT"; break;
     case Undefined: value += "UNDEFINED"; break;
     case EndFile: value += "EOF"; break;
+    default: break;
   }
   value += ",\"";
   value += this->value;

@@ -13,6 +13,10 @@ Scanner::Scanner(string fileName) {
   this->curLine = 1;
 }
 
+Scanner::~Scanner() {
+  this->tokens.clear();
+}
+
 vector<Tokens> Scanner::Read() {
   while (!file.eof()) {
     char next = file.peek();
@@ -44,7 +48,7 @@ vector<Tokens> Scanner::Read() {
           Tokens* tknPtr;
           tknPtr = new Tokens("", this->curLine, EndFile);
           this->tokens.push_back(*tknPtr);
-          return;
+          return this->tokens;
         }
         else {
           this->Undef(this->curLine);

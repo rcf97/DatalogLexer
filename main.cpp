@@ -2,13 +2,14 @@
 #include <string>
 using namespace std;
 
-#include "Tokens.h"
-#include "Scanner.h"
+#include "DatalogProgram.h"
 
 int main(int argc, char* argv[]) {
 	string fileName = argv[1];
 
-	DatalogProgram* program = new DatalogProgram(fileName);
+	DatalogProgram* program;
+	program = new DatalogProgram(fileName);
+	delete program;
 
 	return 0;
 }

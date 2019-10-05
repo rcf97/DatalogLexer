@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <queue>
+#include <stack>
 using namespace std;
 
 #include "Parser.h"
@@ -8,41 +10,43 @@ using namespace std;
 Parser::Parser(vector<Tokens> tkns) {
   for (unsigned int i = 0; i < tkns.size(); i++) {
     Tokens curTkn = tkns.at(i);
-    if (curTkn->type != Comment) {
+    if (curTkn.type != Comment) {
       this->tokens.push(curTkn);
     }
   }
-  this->tknStack.push_back(EndFile);
-  this->tknStack.push_back(queryList);
-  this->tknStack.push_back(query);
-  this->tknStack.push_back(Colon);
-  this->tknStack.push_back(Queries);
-  this->tknStack.push_back(ruleList);
-  this->tknStack.push_back(Colon);
-  this->tknStack.push_back(Rules);
-  this->tknStack.push_back(factList);
-  this->tknStack.push_back(Colon);
-  this->tknStack.push_back(Facts);
-  this->tknStack.push_back(schemeList);
-  this->tknStack.push_back(scheme);
-  this->tknStack.push_back(Colon);
-  this->tknStack.push_back(Schemes);
+  this->tknStack.push(EndFile);
+  this->tknStack.push(queryList);
+  this->tknStack.push(query);
+  this->tknStack.push(Colon);
+  this->tknStack.push(Queries);
+  this->tknStack.push(ruleList);
+  this->tknStack.push(Colon);
+  this->tknStack.push(Rules);
+  this->tknStack.push(factList);
+  this->tknStack.push(Colon);
+  this->tknStack.push(Facts);
+  this->tknStack.push(schemeList);
+  this->tknStack.push(scheme);
+  this->tknStack.push(Colon);
+  this->tknStack.push(Schemes);
 }
 
 Parser::~Parser(){}
 
 void Parser::Parse() {
-  this->ParseDatalogProgram();
+  try{
+    this->ParseDatalogProgram();
+  }
   catch (Tokens thrown) {
-    cout << "Failure!" << endl << "\t" << thrown->ToString() << endl;
-    return
+    cout << "Failure!" << endl << "  " << thrown.ToString() << endl;
+    return;
   }
   cout << "Success!" << endl;
 }
 
 void Parser::ParseDatalogProgram() {
   do {
-    if (tknStack.top() == tokens.front()->type) {
+    if (tknStack.top() == tokens.front().type) {
       tknStack.pop();
       tokens.pop();
     }
@@ -55,18 +59,19 @@ void Parser::ParseDatalogProgram() {
         case query: this->Parsequery(); break;
         case queryList: this->ParsequeryList(); break;
         default:
-          try{ throw tokens.front();} break;
+          throw tokens.front();
+          break;
       }
     }
   } while (tknStack.top() != EndFile);
   if (tknStack.top() == EndFile && tokens.empty()==false) {
-    try{ throw tokens.front(); }
+    throw tokens.front();
   }
 }
 
 void Parser::ParseschemeList() {
   tknStack.pop();
-  switch (tokens.front()) {
+  switch (tokens.front().type) {
     case ID:
       tknStack.push(schemeList);
       tknStack.push(scheme);
@@ -77,14 +82,14 @@ void Parser::ParseschemeList() {
       return;
       break;
     default:
-      try{ throw tokens.front();}
+      throw tokens.front();
       break;
     }
 }
 
 void Parser::ParsefactList() {
   tknStack.pop();
-  switch (tokens.front()) {
+  switch (tokens.front().type) {
     case ID:
       tknStack.push(factList);
       tknStack.push(fact);
@@ -95,13 +100,13 @@ void Parser::ParsefactList() {
       return;
       break;
     default:
-      try{ throw tokens.front(); break;}
+      throw tokens.front();
   }
 }
 
 void Parser::ParseruleList() {
   tknStack.pop();
-  switch (tokens.front()) {
+  switch (tokens.front().type) {
     case ID:
       tknStack.push(ruleList);
       tknStack.push(rule);
@@ -112,12 +117,25 @@ void Parser::ParseruleList() {
       return;
       break;
     default:
-      try{ throw tokens.front(); break;}
+      throw tokens.front();
   }
 }
 
 void Parser::ParsequeryList() {
-
+  tknStack.pop();
+  switch (tokens.front().type) {
+    case ID:
+      tknStack.push(queryList);
+      tknStack.push(query);
+      this->Parsequery();
+      this->ParsequeryList();
+      break;
+    case EndFile:
+      return;
+      break;
+    default:
+      throw tokens.front();
+  }
 }
 
 void Parser::Parsescheme() {
@@ -128,20 +146,23 @@ void Parser::Parsescheme() {
   tknStack.push(LeftPar);
   tknStack.push(ID);
   do {
-    if (tknStack.top() == tokens.front()->type) {
+    if (tknStack.top() == tokens.front().type) {
       tknStack.pop();
       tokens.pop();
     }
     else {
       switch (tknStack.top()) {
-        case idList: this->ParseidList(); break;
+        case idList:
+          this->ParseidList();
+          break;
         default:
-          try{ throw tokens.front();} break;
+          throw tokens.front();
+          break;
       }
     }
   } while (tknStack.top() != RigPar);
   if (tknStack.top() == EndFile && tokens.empty()==false) {
-    try{ throw tokens.front(); }
+    throw tokens.front();
   }
 }
 
@@ -154,7 +175,7 @@ void Parser::Parsefact() {
   tknStack.push(LeftPar);
   tknStack.push(ID);
   do {
-    if (tknStack.top() == tokens.front()->type) {
+    if (tknStack.top() == tokens.front().type) {
       tknStack.pop();
       tokens.pop();
     }
@@ -162,12 +183,13 @@ void Parser::Parsefact() {
       switch (tknStack.top()) {
         case idList: this->ParsestringList(); break;
         default:
-          try{ throw tokens.front();} break;
+          throw tokens.front();
+          break;
       }
     }
   } while (tknStack.top() != Period);
   if (tknStack.top() == EndFile && tokens.empty()==false) {
-    try{ throw tokens.front(); }
+    throw tokens.front();
   }
 }
 
@@ -179,7 +201,7 @@ void Parser::Parserule() {
   tknStack.push(ColonDash);
   tknStack.push(headPredicate);
   do {
-    if (tknStack.top() == tokens.front()->type) {
+    if (tknStack.top() == tokens.front().type) {
       tknStack.pop();
       tokens.pop();
     }
@@ -195,21 +217,22 @@ void Parser::Parserule() {
           this->ParsepredicateList();
           break;
         default:
-          try{ throw tokens.front();} break;
+          throw tokens.front();
+          break;
       }
     }
   } while (tknStack.top() != Period);
   if (tknStack.top() == EndFile && tokens.empty()==false) {
-    try{ throw tokens.front(); }
+    throw tokens.front();
   }
 }
 
 void Parser::Parsequery() {
   tknStack.pop();
-  tknStack.push(QMark);
+  tknStack.push(Qmark);
   tknStack.push(predicate);
   do {
-    if (tknStack.top() == tokens.front()->type) {
+    if (tknStack.top() == tokens.front().type) {
       tknStack.pop();
       tokens.pop();
     }
@@ -217,12 +240,13 @@ void Parser::Parsequery() {
       switch (tknStack.top()) {
         case predicate: this->Parsepredicate(); break;
         default:
-          try{ throw tokens.front();} break;
+          throw tokens.front();
+          break;
       }
     }
-  } while (tknStack.top() != QMark);
+  } while (tknStack.top() != Qmark);
   if (tknStack.top() == EndFile && tokens.empty()==false) {
-    try{ throw tokens.front(); }
+    throw tokens.front();
   }
 }
 
@@ -234,7 +258,7 @@ void Parser::ParseheadPredicate() {
   tknStack.push(LeftPar);
   tknStack.push(ID);
   do {
-    if (tknStack.top() == tokens.front()->type) {
+    if (tknStack.top() == tokens.front().type) {
       tknStack.pop();
       tokens.pop();
     }
@@ -242,12 +266,13 @@ void Parser::ParseheadPredicate() {
       switch (tknStack.top()) {
         case idList: this->ParseidList(); break;
         default:
-          try{ throw tokens.front();} break;
+          throw tokens.front();
+          break;
       }
     }
   } while (tknStack.top() != RigPar);
   if (tknStack.top() == EndFile && tokens.empty()==false) {
-    try{ throw tokens.front(); }
+    throw tokens.front();
   }
 }
 
@@ -259,7 +284,7 @@ void Parser::Parsepredicate() {
   tknStack.push(LeftPar);
   tknStack.push(ID);
   do {
-    if (tknStack.top() == tokens.front()->type) {
+    if (tknStack.top() == tokens.front().type) {
       tknStack.pop();
       tokens.pop();
     }
@@ -268,39 +293,161 @@ void Parser::Parsepredicate() {
         case parameter: this->Parseparameter(); break;
         case parameterList: this->ParseparameterList(); break;
         default:
-          try{ throw tokens.front();} break;
+          throw tokens.front();
+          break;
       }
     }
   } while (tknStack.top() != RigPar);
   if (tknStack.top() == EndFile && tokens.empty()==false) {
-    try{ throw tokens.front(); }
+    throw tokens.front();
   }
 }
 
 void Parser::ParsepredicateList() {
-
+  tknStack.pop();
+  switch (tokens.front().type) {
+    case Comma:
+      tokens.pop();
+      tknStack.push(predicateList);
+      tknStack.push(predicate);
+      this->Parsepredicate();
+      this->ParsepredicateList();
+      break;
+    case Period:
+      return;
+      break;
+    default:
+      throw tokens.front();
+      break;
+  }
 }
 
 void Parser::ParseparameterList() {
-
+  tknStack.pop();
+  switch (tokens.front().type) {
+    case Comma:
+      tokens.pop();
+      tknStack.push(parameterList);
+      tknStack.push(parameter);
+      this->Parseparameter();
+      this->ParseparameterList();
+      break;
+    case RigPar:
+      return;
+      break;
+    default:
+      throw tokens.front();
+      break;
+  }
 }
 
 void Parser::ParsestringList() {
-
+  tknStack.pop();
+  switch (tokens.front().type) {
+    case Comma:
+      tokens.pop();
+      tknStack.push(stringList);
+      tknStack.push(String);
+      if (tokens.front().type != tknStack.top()) {
+        throw tokens.front();
+      }
+      else {
+        tokens.pop();
+        tknStack.pop();
+      }
+      this->ParsestringList();
+      break;
+    case RigPar:
+      return;
+      break;
+    default:
+      throw tokens.front();
+      break;
+  }
 }
 
 void Parser::ParseidList() {
-
+  tknStack.pop();
+  switch (tokens.front().type) {
+    case Comma:
+      tokens.pop();
+      tknStack.push(idList);
+      tknStack.push(ID);
+      if (tokens.front().type != tknStack.top()) {
+        throw tokens.front();
+      }
+      else {
+        tokens.pop();
+        tknStack.pop();
+      }
+      this->ParseidList();
+      break;
+    case RigPar:
+      return;
+      break;
+    default:
+      throw tokens.front();
+      break;
+  }
 }
 
 void Parser::Parseparameter() {
-
+  tknStack.pop();
+  switch(tokens.front().type) {
+    case String:
+      tokens.pop();
+      break;
+    case ID:
+      tokens.pop();
+      break;
+    case LeftPar:
+      tknStack.push(expression);
+      this->Parseexpression();
+      break;
+    default:
+      throw tokens.front();
+      break;
+  }
 }
 
 void Parser::Parseexpression() {
-
+  tknStack.pop();
+  tknStack.push(RigPar);
+  tknStack.push(parameter);
+  tknStack.push(op);
+  tknStack.push(parameter);
+  tknStack.push(LeftPar);
+  do {
+    if (tknStack.top() == tokens.front().type) {
+      tknStack.pop();
+      tokens.pop();
+    }
+    else {
+      switch (tknStack.top()) {
+        case parameter: this->Parseparameter(); break;
+        case op: this->Parseoperator(); break;
+        default:
+          throw tokens.front();
+          break;
+      }
+    }
+  } while (tknStack.top() != RigPar);
+  if (tknStack.top() == EndFile && tokens.empty()==false) {
+    throw tokens.front();
+  }
 }
 
 void Parser::Parseoperator() {
-
+  tknStack.pop();
+  switch (tokens.front().type) {
+    case Add:
+      tokens.pop();
+      break;
+    case Mult:
+      tokens.pop();
+      break;
+    default:
+      throw tokens.front();
+      break;
+  }
 }

@@ -7,7 +7,7 @@ enum TokenType { ID, EndFile, Comment, Comma, Period, Qmark, LeftPar,
 	Queries, String, Undefined,
 	scheme, schemeList, factList, fact, rule, ruleList, query,
 	queryList, idList, stringList, headPredicate, predicate,
-	predicateList, parameterList, parameter, expression, operator};
+	predicateList, parameterList, parameter, expression, op};
 
 class Tokens {
 private:
