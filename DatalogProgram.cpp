@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ostream>
 #include <vector>
 using namespace std;
 
@@ -8,6 +9,7 @@ DatalogProgram::DatalogProgram(string fileName) {
   this->scnPtr = new Scanner(fileName);
   this->tokens = this->scnPtr->Read();
   this->parsePtr = new Parser(this->tokens);
+  this->scnPtr->Print();
   this->parsePtr->Parse();
 }
 
