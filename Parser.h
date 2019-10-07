@@ -2,14 +2,22 @@
 #include <iostream>
 #include <queue>
 #include <stack>
+#include <vector>
 using namespace std;
 
 #include "Tokens.h"
+#include "Predicate.h"
 
 class Parser {
 private:
   queue<Tokens> tokens;
   stack<TokenType> tknStack;
+  vector<vector<Predicate*>> V;
+  vector<Predicate*> schemesV;
+  vector<Predicate*> factsV;
+  //vector<Rule*> rulesV;
+  vector<Predicate*> queriesV;
+  friend class DatalogProgram;
 public:
   Parser(vector<Tokens> tkns);
   ~Parser();
@@ -29,7 +37,7 @@ public:
   void ParseparameterList();
   void ParsestringList();
   void ParseidList();
-  void Parseparameter();
-  void Parseexpression();
-  void Parseoperator();
+  Parameter* Parseparameter();
+  Parameter* Parseexpression();
+  Tokens* Parseoperator();
 };

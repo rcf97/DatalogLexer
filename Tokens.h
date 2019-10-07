@@ -15,6 +15,8 @@ private:
 	int line;
 	TokenType type;
 	friend class Parser;
+	friend class Parameter;
+	friend class Expression;
 public:
 	Tokens(string value, int line, TokenType type);
 	string ToString();

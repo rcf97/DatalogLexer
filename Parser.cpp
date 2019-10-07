@@ -6,6 +6,8 @@ using namespace std;
 
 #include "Parser.h"
 #include "Tokens.h"
+#include "Predicate.h"
+#include "Parameter.h"
 
 Parser::Parser(vector<Tokens> tkns) {
   for (unsigned int i = 0; i < tkns.size(); i++) {
@@ -56,9 +58,14 @@ void Parser::ParseDatalogProgram() {
     }
     else {
       switch (tknStack.top()) {
-        case scheme: this->Parsescheme(); break;
+        case scheme:
+          this->V.push_back(schemesV);
+          this->Parsescheme();
+          break;
         case schemeList: this->ParseschemeList(); break;
-        case factList: this->ParsefactList(); break;
+        case factList:
+          this->V.push_back(factsV);
+          this->ParsefactList(); break;
         case ruleList: this->ParseruleList(); break;
         case query: this->Parsequery(); break;
         case queryList: this->ParsequeryList(); break;
@@ -149,9 +156,21 @@ void Parser::Parsescheme() {
   tknStack.push(ID);
   tknStack.push(LeftPar);
   tknStack.push(ID);
+  Predicate* prdPtr = nullptr;
+  Parameter* paramPtr = nullptr;
+  if (tknStack.top() == tokens.front().type) {
+    prdPtr = new Predicate(tokens.front().value);
+    this->V.back().push_back(prdPtr);
+    tknStack.pop();
+    tokens.pop();
+  }
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
+      if (last == ID) {
+        paramPtr = new IDParam(tokens.front().value);
+        this->V.back().back()->paramlist.push_back(paramPtr);
+      }
       tknStack.pop();
       tokens.pop();
       if (last == RigPar) {
@@ -182,9 +201,21 @@ void Parser::Parsefact() {
   tknStack.push(String);
   tknStack.push(LeftPar);
   tknStack.push(ID);
+  Predicate* prdPtr = nullptr;
+  Parameter* paramPtr = nullptr;
+  if (tknStack.top() == tokens.front().type) {
+    prdPtr = new Predicate(tokens.front().value);
+    this->V.back().push_back(prdPtr);
+    tknStack.pop();
+    tokens.pop();
+  }
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
+      if (last == ID) {
+        paramPtr = new IDParam(tokens.front().value);
+        this->V.back().back()->paramlist.push_back(paramPtr);
+      }
       tknStack.pop();
       tokens.pop();
       if (last == Period) {
@@ -247,6 +278,7 @@ void Parser::Parsequery() {
   tknStack.pop();
   tknStack.push(Qmark);
   tknStack.push(predicate);
+  this->V.push_back(queriesV);
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
@@ -307,6 +339,13 @@ void Parser::Parsepredicate() {
   tknStack.push(parameter);
   tknStack.push(LeftPar);
   tknStack.push(ID);
+  Predicate* prdPtr = nullptr;
+  if (tknStack.top() == tokens.front().type) {
+    prdPtr = new Predicate(tokens.front().value);
+    this->V.back().push_back(prdPtr);
+    tknStack.pop();
+    tokens.pop();
+  }
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
@@ -354,12 +393,14 @@ void Parser::ParsepredicateList() {
 
 void Parser::ParseparameterList() {
   tknStack.pop();
+  Parameter* prm = nullptr;
   switch (tokens.front().type) {
     case Comma:
       tokens.pop();
       tknStack.push(parameterList);
       tknStack.push(parameter);
-      this->Parseparameter();
+      prm = this->Parseparameter();
+      this->V.back().back()->paramlist.push_back(prm);
       this->ParseparameterList();
       break;
     case RigPar:
@@ -373,6 +414,8 @@ void Parser::ParseparameterList() {
 
 void Parser::ParsestringList() {
   tknStack.pop();
+  Tokens* tkn = nullptr;
+  Parameter* prm = nullptr;
   switch (tokens.front().type) {
     case Comma:
       tokens.pop();
@@ -382,6 +425,11 @@ void Parser::ParsestringList() {
         throw tokens.front();
       }
       else {
+        if (tokens.front().type == ID) {
+          tkn = &tokens.front();
+          prm = new StringParam(tkn->value);
+          this->V.back().back()->paramlist.push_back(prm);
+        }
         tokens.pop();
         tknStack.pop();
       }
@@ -398,6 +446,8 @@ void Parser::ParsestringList() {
 
 void Parser::ParseidList() {
   tknStack.pop();
+  Parameter* prm = nullptr;
+  Tokens* tkns = nullptr;
   switch (tokens.front().type) {
     case Comma:
       tokens.pop();
@@ -407,6 +457,11 @@ void Parser::ParseidList() {
         throw tokens.front();
       }
       else {
+        if (tokens.front().type == ID) {
+          tkns = &tokens.front();
+          prm = new IDParam(tkns->value);
+          this->V.back().back()->paramlist.push_back(prm);
+        }
         tokens.pop();
         tknStack.pop();
       }
@@ -421,32 +476,39 @@ void Parser::ParseidList() {
   }
 }
 
-void Parser::Parseparameter() {
+Parameter* Parser::Parseparameter() {
   tknStack.pop();
+  Parameter* prm = nullptr;
   switch(tokens.front().type) {
     case String:
+      prm = new StringParam(tokens.front().value);
       tokens.pop();
       break;
     case ID:
+      prm = new IDParam(tokens.front().value);
       tokens.pop();
       break;
     case LeftPar:
       tknStack.push(expression);
-      this->Parseexpression();
+      prm = this->Parseexpression();
       break;
     default:
       throw tokens.front();
       break;
   }
+  return prm;
 }
 
-void Parser::Parseexpression() {
+Parameter* Parser::Parseexpression() {
   tknStack.pop();
   tknStack.push(RigPar);
   tknStack.push(parameter);
   tknStack.push(op);
   tknStack.push(parameter);
   tknStack.push(LeftPar);
+  Parameter* prm;
+  Parameter* prm2;
+  Tokens* oper;
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
@@ -458,8 +520,17 @@ void Parser::Parseexpression() {
     }
     else {
       switch (tknStack.top()) {
-        case parameter: this->Parseparameter(); break;
-        case op: this->Parseoperator(); break;
+        case parameter:
+          if (prm == nullptr) {
+            prm = this->Parseparameter();
+          }
+          else {
+            prm2 = this->Parseparameter();
+          }
+          break;
+        case op:
+          oper = this->Parseoperator();
+          break;
         default:
           throw tokens.front();
           break;
@@ -469,19 +540,26 @@ void Parser::Parseexpression() {
   if (tknStack.top() == EndFile && tokens.empty()==false) {
     throw tokens.front();
   }
+  Expression* expr = nullptr;
+  expr = new Expression(prm, oper, prm2);
+  return expr;
 }
 
-void Parser::Parseoperator() {
+Tokens* Parser::Parseoperator() {
   tknStack.pop();
+  Tokens* tkn = nullptr;
   switch (tokens.front().type) {
     case Add:
+      tkn = &tokens.front();
       tokens.pop();
       break;
     case Mult:
+      tkn = &tokens.front();
       tokens.pop();
       break;
     default:
       throw tokens.front();
       break;
   }
+  return tkn;
 }
