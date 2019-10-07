@@ -36,15 +36,19 @@ Parser::Parser(vector<Tokens> tkns) {
 
 Parser::~Parser(){}
 
-void Parser::Parse() {
+bool Parser::Parse() {
+  bool flag = true;
   try{
     this->ParseDatalogProgram();
   }
   catch (Tokens thrown) {
-    cout << "Failure!" << endl << "  " << thrown.ToString() << endl;
-    return;
+    cout << "Failure!" << endl << "  " << thrown.ToString();
+    flag = false;
   }
-  cout << "Success!" << endl;
+  if (flag) {
+    cout << "Success!" << endl;
+  }
+  return flag;
 }
 
 void Parser::ParseDatalogProgram() {
@@ -222,7 +226,7 @@ void Parser::Parsefact() {
       if (last == String) {
         paramPtr = new StringParam(tokens.front().value);
         this->V.back().back()->paramlist.push_back(paramPtr);
-        this->domainV.push_back(tokens.front().value);
+        this->domain.insert(tokens.front().value);
       }
       tknStack.pop();
       tokens.pop();
@@ -455,6 +459,7 @@ void Parser::ParsestringList() {
           tkn = &tokens.front();
           prm = new StringParam(tkn->value);
           this->V.back().back()->paramlist.push_back(prm);
+          this->domain.insert(tokens.front().value);
         }
         tokens.pop();
         tknStack.pop();

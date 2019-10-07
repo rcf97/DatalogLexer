@@ -19,7 +19,7 @@ private:
   vector<Predicate*> factsV;
   vector<Rule*> rulesV;
   vector<Predicate*> queriesV;
-  vector<string> domainV;
+  set<string> domain;
   friend class Parser;
 public:
   DatalogProgram(string fileName);

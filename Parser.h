@@ -4,6 +4,7 @@
 #include <stack>
 #include <vector>
 #include <string>
+#include <set>
 using namespace std;
 
 #include "Tokens.h"
@@ -17,12 +18,12 @@ private:
   vector<Predicate*> schemesV;
   vector<Predicate*> factsV;
   vector<Predicate*> queriesV;
-  vector<string> domainV;
+  set<string> domain;
   friend class DatalogProgram;
 public:
   Parser(vector<Tokens> tkns);
   ~Parser();
-  void Parse();
+  bool Parse();
   void ParseDatalogProgram();
   void ParseschemeList();
   void ParsefactList();

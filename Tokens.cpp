@@ -1,42 +1,43 @@
 #include <string>
-
+#include <iostream>
 #include "Tokens.h"
 using namespace std;
 
-Tokens::Tokens(string value, int line, TokenType type) {            //Constructor
+Tokens::Tokens(string value, int line, TokenType type) {     //Constructor
   this->value = value;
   this->line = line;
   this->type = type;
 }
 
 string Tokens::ToString() {
-  string value = "";
-  value += "(";
+  string out = "";
+  out.reserve(100);
+  out += "(";
   switch(this->type) {
-    case ID: value += "ID"; break;
-    case Comma: value += "COMMA"; break;
-    case Period: value += "PERIOD"; break;
-    case Qmark: value += "Q_MARK"; break;
-    case LeftPar: value += "LEFT_PAREN"; break;
-    case RigPar: value += "RIGHT_PAREN"; break;
-    case Colon: value += "COLON"; break;
-    case ColonDash: value += "COLON_DASH"; break;
-    case Mult: value += "MULTIPLY"; break;
-    case Add: value += "ADD"; break;
-    case Schemes: value += "SCHEMES"; break;
-    case Facts: value += "FACTS"; break;
-    case Rules: value += "RULES"; break;
-    case Queries: value += "QUERIES"; break;
-    case String: value += "STRING"; break;
-    case Comment: value += "COMMENT"; break;
-    case Undefined: value += "UNDEFINED"; break;
-    case EndFile: value += "EOF"; break;
+    case ID: out += "ID"; break;
+    case Comma: out += "COMMA"; break;
+    case Period: out += "PERIOD"; break;
+    case Qmark: out += "Q_MARK"; break;
+    case LeftPar: out += "LEFT_PAREN"; break;
+    case RigPar: out += "RIGHT_PAREN"; break;
+    case Colon: out += "COLON"; break;
+    case ColonDash: out += "COLON_DASH"; break;
+    case Mult: out += "MULTIPLY"; break;
+    case Add: out += "ADD"; break;
+    case Schemes: out += "SCHEMES"; break;
+    case Facts: out += "FACTS"; break;
+    case Rules: out += "RULES"; break;
+    case Queries: out += "QUERIES"; break;
+    case String: out += "STRING"; break;
+    case Comment: out += "COMMENT"; break;
+    case Undefined: out += "UNDEFINED"; break;
+    case EndFile: out += "EOF"; break;
     default: break;
   }
-  value += ",\"";
-  value += this->value;
-  value += "\",";
-  value += to_string(this->line);
-  value += ")";
-  return value;
+  out += ",\"";
+  out += this->value;
+  out += "\",";
+  out += to_string(this->line);
+  out += ")";
+  return out;
 }
