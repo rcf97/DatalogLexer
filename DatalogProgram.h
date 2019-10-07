@@ -7,6 +7,7 @@ using namespace std;
 #include "Scanner.h"
 #include "Parser.h"
 #include "Predicate.h"
+#include "Rule.h"
 
 class DatalogProgram {
 private:
@@ -14,12 +15,15 @@ private:
   Scanner* scnPtr;
   Parser* parsePtr;
   vector<vector<Predicate*>> V;
-  /*vector<Predicate*> schemesV;
+  vector<Predicate*> schemesV;
   vector<Predicate*> factsV;
-  //vector<Rule*> rulesV;
-  vector<Predicate*> queriesV;*/
+  vector<Rule*> rulesV;
+  vector<Predicate*> queriesV;
+  vector<string> domainV;
+  friend class Parser;
 public:
   DatalogProgram(string fileName);
   ~DatalogProgram();
+  void FixRules();
   void ToString();
 };

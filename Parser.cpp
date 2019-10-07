@@ -8,6 +8,7 @@ using namespace std;
 #include "Tokens.h"
 #include "Predicate.h"
 #include "Parameter.h"
+#include "Rule.h"
 
 Parser::Parser(vector<Tokens> tkns) {
   for (unsigned int i = 0; i < tkns.size(); i++) {
@@ -65,9 +66,15 @@ void Parser::ParseDatalogProgram() {
         case schemeList: this->ParseschemeList(); break;
         case factList:
           this->V.push_back(factsV);
-          this->ParsefactList(); break;
-        case ruleList: this->ParseruleList(); break;
-        case query: this->Parsequery(); break;
+          this->ParsefactList();
+          break;
+        case ruleList:
+          this->ParseruleList();
+          break;
+        case query:
+          this->V.push_back(queriesV);
+          this->Parsequery();
+          break;
         case queryList: this->ParsequeryList(); break;
         default:
           throw tokens.front();
@@ -212,9 +219,10 @@ void Parser::Parsefact() {
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
-      if (last == ID) {
-        paramPtr = new IDParam(tokens.front().value);
+      if (last == String) {
+        paramPtr = new StringParam(tokens.front().value);
         this->V.back().back()->paramlist.push_back(paramPtr);
+        this->domainV.push_back(tokens.front().value);
       }
       tknStack.pop();
       tokens.pop();
@@ -243,6 +251,8 @@ void Parser::Parserule() {
   tknStack.push(predicate);
   tknStack.push(ColonDash);
   tknStack.push(headPredicate);
+  vector<Predicate*> newRule;
+  this->V.push_back(newRule);
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
@@ -278,7 +288,7 @@ void Parser::Parsequery() {
   tknStack.pop();
   tknStack.push(Qmark);
   tknStack.push(predicate);
-  this->V.push_back(queriesV);
+
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
@@ -309,9 +319,21 @@ void Parser::ParseheadPredicate() {
   tknStack.push(ID);
   tknStack.push(LeftPar);
   tknStack.push(ID);
+  Predicate* predPtr = nullptr;
+  Parameter* prm = nullptr;
+  if (tknStack.top() == tokens.front().type) {
+    predPtr = new Predicate(tokens.front().value);
+    this->V.back().push_back(predPtr);
+    tknStack.pop();
+    tokens.pop();
+  }
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
+      if (last == ID) {
+        prm = new IDParam(tokens.front().value);
+        this->V.back().back()->paramlist.push_back(prm);
+      }
       tknStack.pop();
       tokens.pop();
       if (last == RigPar) {
@@ -346,6 +368,7 @@ void Parser::Parsepredicate() {
     tknStack.pop();
     tokens.pop();
   }
+  Parameter* prm = nullptr;
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
@@ -357,7 +380,10 @@ void Parser::Parsepredicate() {
     }
     else {
       switch (tknStack.top()) {
-        case parameter: this->Parseparameter(); break;
+        case parameter:
+          prm = this->Parseparameter();
+          this->V.back().back()->paramlist.push_back(prm);
+          break;
         case parameterList:
           this->ParseparameterList();
           break;
@@ -425,7 +451,7 @@ void Parser::ParsestringList() {
         throw tokens.front();
       }
       else {
-        if (tokens.front().type == ID) {
+        if (tokens.front().type == String) {
           tkn = &tokens.front();
           prm = new StringParam(tkn->value);
           this->V.back().back()->paramlist.push_back(prm);
@@ -496,6 +522,7 @@ Parameter* Parser::Parseparameter() {
       throw tokens.front();
       break;
   }
+  //this->V.back().back()->paramlist.push_back(prm);
   return prm;
 }
 

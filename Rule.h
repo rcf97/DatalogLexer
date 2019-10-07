@@ -5,10 +5,11 @@ using namespace std;
 
 #include "Predicate.h"
 
-class Rules : public Predicate {
+class Rule {
   Predicate* head;
   vector<Predicate*> predlist;
 public:
-  Rules();
+  Rule(Predicate* head);
+  void addPred(Predicate* add);
   string ToString();
 };

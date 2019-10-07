@@ -3,6 +3,7 @@
 #include <queue>
 #include <stack>
 #include <vector>
+#include <string>
 using namespace std;
 
 #include "Tokens.h"
@@ -15,8 +16,8 @@ private:
   vector<vector<Predicate*>> V;
   vector<Predicate*> schemesV;
   vector<Predicate*> factsV;
-  //vector<Rule*> rulesV;
   vector<Predicate*> queriesV;
+  vector<string> domainV;
   friend class DatalogProgram;
 public:
   Parser(vector<Tokens> tkns);
