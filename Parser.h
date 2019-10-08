@@ -40,6 +40,6 @@ public:
   void ParsestringList();
   void ParseidList();
   Parameter* Parseparameter();
-  Parameter* Parseexpression();
-  Tokens* Parseoperator();
+  Expression* Parseexpression();
+  string Parseoperator();
 };

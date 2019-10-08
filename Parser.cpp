@@ -531,16 +531,16 @@ Parameter* Parser::Parseparameter() {
   return prm;
 }
 
-Parameter* Parser::Parseexpression() {
+Expression* Parser::Parseexpression() {
   tknStack.pop();
   tknStack.push(RigPar);
   tknStack.push(parameter);
   tknStack.push(op);
   tknStack.push(parameter);
   tknStack.push(LeftPar);
-  Parameter* prm;
-  Parameter* prm2;
-  Tokens* oper;
+  Parameter* prm = nullptr;
+  Parameter* prm2 = nullptr;
+  string oper = "";
   while (1==1) {
     if (tknStack.top() == tokens.front().type) {
       TokenType last = tokens.front().type;
@@ -577,16 +577,16 @@ Parameter* Parser::Parseexpression() {
   return expr;
 }
 
-Tokens* Parser::Parseoperator() {
+string Parser::Parseoperator() {
   tknStack.pop();
-  Tokens* tkn = nullptr;
+  string tkn = "";
   switch (tokens.front().type) {
     case Add:
-      tkn = &tokens.front();
+      tkn = tokens.front().value;
       tokens.pop();
       break;
     case Mult:
-      tkn = &tokens.front();
+      tkn = tokens.front().value;
       tokens.pop();
       break;
     default:

@@ -5,11 +5,7 @@ using namespace std;
 
 Parameter::Parameter() {}
 
-string Parameter::ToString() {
-  return this->value;
-}
-
-Expression::Expression(Parameter* lhs, Tokens* op, Parameter* rhs) {
+Expression::Expression(Parameter* lhs, string op, Parameter* rhs) {
   this->lhs = lhs;
   this->op = op;
   this->rhs = rhs;
@@ -17,9 +13,11 @@ Expression::Expression(Parameter* lhs, Tokens* op, Parameter* rhs) {
 
 string Expression::ToString() {
   string out;
+  out += "(";
   out += this->lhs->ToString();
-  out += this->op->value;
+  out += this->op;
   out += this->rhs->ToString();
+  out += ")";
   return out;
 }
 
@@ -31,4 +29,12 @@ StringParam::StringParam(string value) {
 IDParam::IDParam(string value) {
   this->value = value;
   this->type = ID;
+}
+
+string StringParam::ToString() {
+  return this->value;
+}
+
+string IDParam::ToString() {
+  return this->value;
 }
