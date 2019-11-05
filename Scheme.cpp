@@ -10,7 +10,7 @@ using namespace std;
 Scheme::Scheme(Predicate* predPtr) {
   this->name = predPtr->getIdent();
   unsigned int i;
-  for (i = 0; predPtr->paramlist.size(); i++) {
+  for (i = 0; i < predPtr->paramlist.size(); i++) {
     this->attributes.push_back(predPtr->paramlist.at(i)->ToString());
   }
 }

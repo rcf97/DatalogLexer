@@ -15,7 +15,7 @@ Tuple::~Tuple() {}
 string Tuple::ToString() {
   stringstream ss;
   ss << "(";
-  for (unsigned int i = 0; this->elements.size(); i++) {
+  for (unsigned int i = 0; i < this->elements.size(); i++) {
     ss << this->elements.at(i);
     ss << ",";
   }

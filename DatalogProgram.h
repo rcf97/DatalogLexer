@@ -8,6 +8,7 @@ using namespace std;
 #include "Parser.h"
 #include "Predicate.h"
 #include "Rule.h"
+#include "Database.h"
 
 class DatalogProgram {
 private:
@@ -20,6 +21,7 @@ private:
   vector<Rule*> rulesV;
   vector<Predicate*> queriesV;
   set<string> domain;
+  Database* databasePtr;
   friend class Parser;
 public:
   DatalogProgram(string fileName);

@@ -20,6 +20,7 @@ DatalogProgram::DatalogProgram(string fileName) {
     this->FixRules();
     this->ToString();
     this->ToDatabase();
+    this->databasePtr->ToString();
   }
 }
 
@@ -86,11 +87,12 @@ void DatalogProgram::ToString() {
 void DatalogProgram::ToDatabase() {
   Database* databasePtr;
   databasePtr = new Database();
+  this->databasePtr = databasePtr;
   unsigned int i;
   for (i = 0; i < this->schemesV.size(); i++) {
-    databasePtr->AddScheme(this->schemesV.at(i));
+    this->databasePtr->AddScheme(this->schemesV.at(i));
   }
   for (i = 0; i < this->factsV.size(); i++) {
-    databasePtr->AddFact(this->factsV.at(i));
+    this->databasePtr->AddFact(this->factsV.at(i));
   }
 }

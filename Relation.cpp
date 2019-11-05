@@ -18,7 +18,7 @@ Relation::Relation(Scheme* schemePtr) {
 void Relation::AddFact(Predicate* predPtr) {
   vector<string> elements;
   unsigned int i;
-  for (i = 0; predPtr->paramlist.size(); i++) {
+  for (i = 0; i < predPtr->paramlist.size(); i++) {
     elements.push_back(predPtr->paramlist.at(i)->ToString());
   }
   Tuple* tplPtr;
