@@ -26,4 +26,5 @@ public:
   ~DatalogProgram();
   void FixRules();
   void ToString();
+  void ToDatabase();
 };

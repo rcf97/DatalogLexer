@@ -21,3 +21,7 @@ string Predicate::ToString() {
   output += ")";
   return output;
 }
+
+string Predicate::getIdent() {
+  return this->ident;
+}

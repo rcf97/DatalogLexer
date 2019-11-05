@@ -7,6 +7,7 @@ using namespace std;
 
 #include "DatalogProgram.h"
 #include "Rule.h"
+#include "Database.h"
 
 DatalogProgram::DatalogProgram(string fileName) {
   this->scnPtr = new Scanner(fileName);
@@ -18,6 +19,7 @@ DatalogProgram::DatalogProgram(string fileName) {
     this->domain = this->parsePtr->domain;
     this->FixRules();
     this->ToString();
+    this->ToDatabase();
   }
 }
 
@@ -78,5 +80,17 @@ void DatalogProgram::ToString() {
   set<string>::iterator it;
   for (it = domain.begin(); it != domain.end(); it++) {
     cout << *it << endl;
+  }
+}
+
+void DatalogProgram::ToDatabase() {
+  Database* databasePtr;
+  databasePtr = new Database();
+  unsigned int i;
+  for (i = 0; i < this->schemesV.size(); i++) {
+    databasePtr->AddScheme(this->schemesV.at(i));
+  }
+  for (i = 0; i < this->factsV.size(); i++) {
+    databasePtr->AddFact(this->factsV.at(i));
   }
 }

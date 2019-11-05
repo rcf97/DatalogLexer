@@ -10,7 +10,10 @@ protected:
   string ident;
   vector<Parameter*> paramlist;
   friend class Parser;
+  friend class Scheme;
+  friend class Relation;
 public:
   Predicate(string ident);
   string ToString();
+  string getIdent();
 };
