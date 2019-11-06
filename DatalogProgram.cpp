@@ -18,9 +18,10 @@ DatalogProgram::DatalogProgram(string fileName) {
     this->V = this->parsePtr->V;
     this->domain = this->parsePtr->domain;
     this->FixRules();
-    this->ToString();
+    //this->ToString();
     this->ToDatabase();
-    this->databasePtr->ToString();
+    //this->databasePtr->ToString();
+    this->EvalQuery();
   }
 }
 
@@ -94,5 +95,12 @@ void DatalogProgram::ToDatabase() {
   }
   for (i = 0; i < this->factsV.size(); i++) {
     this->databasePtr->AddFact(this->factsV.at(i));
+  }
+}
+
+void DatalogProgram::EvalQuery() {
+  unsigned int i;
+  for (i = 0; i < this->queriesV.size(); i++) {
+    this->databasePtr->EvalQuery(this->queriesV.at(i));
   }
 }

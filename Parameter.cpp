@@ -2,10 +2,12 @@
 using namespace std;
 
 #include "Parameter.h"
+#include "Tokens.h"
 
 Parameter::Parameter() {}
 
 Expression::Expression(Parameter* lhs, string op, Parameter* rhs) {
+  this->type = expression;
   this->lhs = lhs;
   this->op = op;
   this->rhs = rhs;
@@ -19,6 +21,10 @@ string Expression::ToString() {
   out += this->rhs->ToString();
   out += ")";
   return out;
+}
+
+TokenType Expression::WhatIs() {
+  return this->type;
 }
 
 StringParam::StringParam(string value) {
@@ -35,6 +41,14 @@ string StringParam::ToString() {
   return this->value;
 }
 
+TokenType StringParam::WhatIs() {
+  return this->type;
+}
+
 string IDParam::ToString() {
   return this->value;
+}
+
+TokenType IDParam::WhatIs() {
+  return this->type;
 }

@@ -23,3 +23,15 @@ string Tuple::ToString() {
   string output = ss.str();
   return output;
 }
+
+bool Tuple::operator< (const Tuple& tpl) const {
+  string rightStr = "";
+  for (unsigned int i = 0; i < tpl.elements.size(); i++) {
+    rightStr += tpl.elements.at(i);
+  }
+  string leftStr = "";
+  for (unsigned int i = 0; i < this->elements.size(); i++) {
+    leftStr += this->elements.at(i);
+  }
+  return (leftStr < rightStr);
+}

@@ -15,4 +15,5 @@ public:
   void AddScheme(Predicate* predPtr);
   void AddFact(Predicate* predPtr);
   void ToString();
+  void EvalQuery(Predicate* predPtr);
 };

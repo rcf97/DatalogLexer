@@ -46,7 +46,7 @@ bool Parser::Parse() {
     flag = false;
   }
   if (flag) {
-    cout << "Success!" << endl;
+    //cout << "Success!" << endl;
   }
   return flag;
 }

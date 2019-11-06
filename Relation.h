@@ -9,16 +9,18 @@ using namespace std;
 #include "Predicate.h"
 
 class Relation {
-private:
+protected:
   string name;
   Scheme* relScheme;
-  set<Tuple*> tuples;
+  set<Tuple> tuples;
+  friend class Database;
 public:
   Relation(Scheme* schemePtr);
   ~Relation();
-  void Select();
-  void Project();
-  void Rename();
+  void Select(int pos, string val);
+  void Select(int pos1, int pos2);
+  void Project(vector<int> pos);
+  void Rename(vector<string> var);
   void AddFact(Predicate* predPtr);
   string ToString();
 };

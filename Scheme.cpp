@@ -15,6 +15,25 @@ Scheme::Scheme(Predicate* predPtr) {
   }
 }
 
+Scheme::~Scheme() {
+  
+}
+
 string Scheme::getName() {
   return this->name;
+}
+
+string Scheme::ToString() {
+  string output = "";
+  output += this->name;
+  output += "(";
+  for (unsigned int i = 0; i < this->attributes.size(); i++) {
+    output += this->attributes.at(i);
+    if (i != this->attributes.size() - 1) {
+      output += ",";
+    }
+  }
+  output += ")";
+  output += "\n";
+  return output;
 }

@@ -7,11 +7,13 @@ using namespace std;
 #include "Predicate.h"
 
 class Scheme {
-private:
+protected:
   string name;
   vector<string> attributes;
+  friend class Relation;
 public:
   Scheme(Predicate* predPtr);
   ~Scheme();
   string getName();
+  string ToString();
 };

@@ -29,4 +29,5 @@ public:
   void FixRules();
   void ToString();
   void ToDatabase();
+  void EvalQuery();
 };

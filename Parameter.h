@@ -13,6 +13,7 @@ protected:
 public:
   Parameter();
   virtual string ToString() = 0;
+  virtual TokenType WhatIs() = 0;
 };
 
 class Expression : public Parameter {
@@ -23,16 +24,19 @@ private:
 public:
   Expression(Parameter* lhs, string op, Parameter* rhs);
   string ToString();
+  TokenType WhatIs();
 };
 
 class StringParam : public Parameter {
 public:
   StringParam(string value);
   string ToString();
+  TokenType WhatIs();
 };
 
 class IDParam : public Parameter {
 public:
   IDParam(string value);
   string ToString();
+  TokenType WhatIs();
 };

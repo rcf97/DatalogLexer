@@ -12,6 +12,7 @@ protected:
   friend class Parser;
   friend class Scheme;
   friend class Relation;
+  friend class Database;
 public:
   Predicate(string ident);
   string ToString();
