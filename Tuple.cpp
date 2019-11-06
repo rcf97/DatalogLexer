@@ -17,7 +17,9 @@ string Tuple::ToString() {
   ss << "(";
   for (unsigned int i = 0; i < this->elements.size(); i++) {
     ss << this->elements.at(i);
-    ss << ",";
+    if (i != this->elements.size() - 1) {
+    	ss << ",";
+    }
   }
   ss << ")";
   string output = ss.str();

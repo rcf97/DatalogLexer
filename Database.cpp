@@ -99,8 +99,10 @@ void Database::EvalQuery(Predicate* predPtr) {
     }
   }
   for (i = 0; i < delList.size(); i++) {
-    varPos.erase(varPos.begin() + delList.at(i) - i);
-    var.erase(var.begin() + delList.at(i) - i);
+    if (varPos.size() > 1) {
+      varPos.erase(varPos.begin() + delList.at(i) - i);
+      var.erase(var.begin() + delList.at(i) - i);
+    }
   }
   newRel.Project(varPos);
   newRel.Rename(var);
