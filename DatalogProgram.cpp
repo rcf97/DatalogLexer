@@ -98,6 +98,13 @@ void DatalogProgram::ToDatabase() {
   }
 }
 
+void DatalogProgram::EvalRule() {
+  unsigned int i;
+  for (i=0; i < this->rulesV.size(); i++) {
+    this->databasePtr->EvalRule(this->rulesV.at(i));
+  }
+}
+
 void DatalogProgram::EvalQuery() {
   unsigned int i;
   for (i = 0; i < this->queriesV.size(); i++) {

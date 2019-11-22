@@ -88,6 +88,10 @@ void Relation::Rename(vector<string> var) {
   //cout << this->ToString() << endl << endl;
 }
 
+void Relation::Join(Rule* rulePtr, vector<Predicate*> relations) {
+
+}
+
 string Relation::ToString() {
   string output = "";
   output += this->relScheme->ToString();

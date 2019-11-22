@@ -37,6 +37,94 @@ void Database::ToString() {
   }
 }
 
+void Database::EvalRule(Rule* rulePtr) {
+  /*string ruleName = rulePtr->head->getident();
+  if (this->data.find(ruleName) == this->data.end()) {
+    Scheme* newScheme;
+    newScheme = new Scheme(rulePtr->head);
+    Relation* newRelation;
+    newRelation = new Relation(newScheme);
+    this->data[ruleName] = newRelation;
+  }
+
+  Scheme newSch = *this->data[schname]->relScheme;*/
+
+  vector<Relation> newRels;
+  for (unsigned int i = 0; i < rulePtr->predlist.size(); i++) {
+    Predicate* predPtr = rulePtr->predlist.at(i);
+    string schname = predPtr->getIdent();
+    Scheme newSch = *this->data[schname]->relScheme;
+    Relation newRel = *this->data[schname];
+    newRel.relScheme = &newSch;
+    //cout << newRel.ToString() << endl;
+    unsigned int i;
+    int constPos1 = -1;
+    string const1;
+    int constPos2 = -1;
+    string const2;
+    int constPos3 = -1;
+    string const3;
+    vector<int> varPos;
+    vector<string> var;
+    for (i = 0; i < predPtr->paramlist.size(); i++) {
+      switch(predPtr->paramlist.at(i)->WhatIs()) {
+        case ID:
+          varPos.push_back(i);
+          var.push_back(predPtr->paramlist.at(i)->ToString());
+          break;
+        case String:
+          if (constPos1 == -1) {
+            constPos1 = i;
+            const1 = predPtr->paramlist.at(i)->ToString();
+          }
+          else if (constPos2 == -1) {
+            constPos2 = i;
+            const2 = predPtr->paramlist.at(i)->ToString();
+          }
+          else if (constPos3 == -1) {
+            constPos3 = i;
+            const3 = predPtr->paramlist.at(i)->ToString();
+          }
+          break;
+        case expression:
+          cout << "error: expression" << endl;
+          break;
+        default:
+          cout << "error" << endl;
+      }
+    }
+    if (constPos1 != -1) {
+      newRel.Select(constPos1, const1);
+      if (constPos2 != -1) {
+        newRel.Select(constPos2, const2);
+        if (constPos3 != -1) {
+          newRel.Select(constPos3, const3);
+        }
+      }
+    }
+    vector<int> delList;
+    unsigned int j;
+    for (i = 0; i < var.size(); i++) {
+      for (j = i; j < var.size(); j++) {
+        if (i != j && var.at(i) == var.at(j)) {
+          newRel.Select(varPos.at(i), varPos.at(j));
+          delList.push_back(j);
+        }
+      }
+    }
+    for (i = 0; i < delList.size(); i++) {
+      if (varPos.size() > 1) {
+        varPos.erase(varPos.begin() + delList.at(i) - i);
+        var.erase(var.begin() + delList.at(i) - i);
+      }
+    }
+    newRel.Project(varPos);
+    newRel.Rename(var);
+    newRels.push_back(newRel);
+  }
+  //FIXME
+}
+
 void Database::EvalQuery(Predicate* predPtr) {
   string schname = predPtr->getIdent();
   Scheme newSch = *this->data[schname]->relScheme;

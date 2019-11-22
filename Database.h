@@ -15,5 +15,6 @@ public:
   void AddScheme(Predicate* predPtr);
   void AddFact(Predicate* predPtr);
   void ToString();
+  void EvalRule(Rule* rulePtr);
   void EvalQuery(Predicate* predPtr);
 };
