@@ -38,20 +38,9 @@ void Database::ToString() {
 }
 
 void Database::EvalRule(Rule* rulePtr) {
-  /*string ruleName = rulePtr->head->getident();
-  if (this->data.find(ruleName) == this->data.end()) {
-    Scheme* newScheme;
-    newScheme = new Scheme(rulePtr->head);
-    Relation* newRelation;
-    newRelation = new Relation(newScheme);
-    this->data[ruleName] = newRelation;
-  }
-
-  Scheme newSch = *this->data[schname]->relScheme;*/
-
   vector<Relation> newRels;
-  for (unsigned int i = 0; i < rulePtr->predlist.size(); i++) {
-    Predicate* predPtr = rulePtr->predlist.at(i);
+  for (unsigned int k = 0; k < rulePtr->predlist.size(); k++) {
+    Predicate* predPtr = rulePtr->predlist.at(k);
     string schname = predPtr->getIdent();
     Scheme newSch = *this->data[schname]->relScheme;
     Relation newRel = *this->data[schname];
@@ -122,7 +111,12 @@ void Database::EvalRule(Rule* rulePtr) {
     newRel.Rename(var);
     newRels.push_back(newRel);
   }
-  //FIXME
+  //Join Predicates on RHS
+  Relation intRel;
+  intRel = Relation::Join(newRels);
+
+  //Manipulate intermediate relation to produce new rule
+  
 }
 
 void Database::EvalQuery(Predicate* predPtr) {
