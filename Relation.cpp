@@ -88,8 +88,69 @@ void Relation::Rename(vector<string> var) {
   //cout << this->ToString() << endl << endl;
 }
 
-void Relation::Join(Rule* rulePtr, vector<Predicate*> relations) {
-
+Relation Relation::Join(Relation rel1, Relation rel2) {
+  Scheme* newSch;
+  string newName = rel1.name + rel2.name;
+  vector<string> att;
+  unsigned int i;
+  unsigned int j;
+  for (i = 0; i < rel1.attributes.size(); i++) {
+    att.push_back(rel1.attributes.at(i));
+  }
+  for (i = 0; i < rel2.attributes.size(); i++) {
+    att.push_back(rel2.attributes.at(i));
+  }
+  map<int, int> common;
+  for (i = 0; i < rel1.attributes.size(); i++) {
+    for (j = i; j < rel2.attributes.size(); j++) {
+      if (rel1.attributes.at(i) == rel2.attributes.at(j)) {
+        common[i] = j;
+      }
+    }
+  }
+  newSch = new Scheme(name, att);
+  Relation* joined;
+  joined = new Relation(newSch);
+  set<Tuple>::iterator it1;
+  set<Tuple>::iterator it2;
+  vector<string> newTup;
+  map<int, int>::iterator it;
+  bool add;
+  if (common.size() == 0) {
+    for (it1 = rel1.tuples.begin(); it1 != rel1.tuples.end(); it1++) {
+      for (it2 = rel2.tuples.begin(); it2 != rel2.tuples.end(); it2++) {
+        for (i = 0; i < it1->elements.size(); i++) {
+          newTup.push_back(it1->elements.at(i));
+        }
+        for (i = 0; i < it2->elements.size(); i++) {
+          newTup.push_back(it2->elements.at(i));
+        }
+        joined.tuples.insert(newTup);
+      }
+    }
+  }
+  else {
+    for (it1 = rel1.tuples.begin(); it1 != rel1.tuples.end(); it1++) {
+      for (it2 = rel2.tuples.begin(); it2 != rel2.tuples.end(); it2++) {
+        add = true;
+        for (it = common.begin(); it != common.end(); it++) {
+          if (it1->elements.at(it->first) != it2->elements.at(it->second)) {
+            add = false;
+          }
+        }
+        if (add) {
+          for (i = 0; i < it1->elements.size(); i++) {
+            newTup.push_back(it1->elements.at(i));
+          }
+          for (i = 0; i < it2->elements.size(); i++) {
+            newTup.push_back(it2->elements.at(i));
+          }
+          joined.tuples.insert(newTup);
+        }
+      }
+    }
+  }
+  return joined;
 }
 
 string Relation::ToString() {

@@ -8,7 +8,6 @@ using namespace std;
 class Rule {
   Predicate* head;
   vector<Predicate*> predlist;
-  friend class Database;
 public:
   Rule(Predicate* head);
   void addPred(Predicate* add);
