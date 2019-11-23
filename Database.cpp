@@ -112,11 +112,12 @@ void Database::EvalRule(Rule* rulePtr) {
     newRels.push_back(newRel);
   }
   //Join Predicates on RHS
-  Relation intRel;
-  intRel = Relation::Join(newRels);
+  for (i = 1; i < newRels.size(); i++) {
+    newRels.at(0).join(newRels.at(i));
+  }
 
   //Manipulate intermediate relation to produce new rule
-  
+
 }
 
 void Database::EvalQuery(Predicate* predPtr) {

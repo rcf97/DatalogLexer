@@ -21,7 +21,7 @@ public:
   void Select(int pos1, int pos2);
   void Project(vector<int> pos);
   void Rename(vector<string> var);
-  Relation Join(vector<Relation> relations);
+  void Join(Relation rel1);
   void AddFact(Predicate* predPtr);
   string ToString();
 };

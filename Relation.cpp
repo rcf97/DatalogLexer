@@ -3,6 +3,7 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <map>
 using namespace std;
 
 #include "Relation.h"
@@ -88,50 +89,64 @@ void Relation::Rename(vector<string> var) {
   //cout << this->ToString() << endl << endl;
 }
 
-Relation Relation::Join(Relation rel1, Relation rel2) {
-  Scheme* newSch;
-  string newName = rel1.name + rel2.name;
+void Relation::Join(Relation rel1) {
+  string newName = this->name + rel1.name;
   vector<string> att;
   unsigned int i;
   unsigned int j;
-  for (i = 0; i < rel1.attributes.size(); i++) {
-    att.push_back(rel1.attributes.at(i));
-  }
-  for (i = 0; i < rel2.attributes.size(); i++) {
-    att.push_back(rel2.attributes.at(i));
-  }
+  set<int> notInclude;
   map<int, int> common;
-  for (i = 0; i < rel1.attributes.size(); i++) {
-    for (j = i; j < rel2.attributes.size(); j++) {
-      if (rel1.attributes.at(i) == rel2.attributes.at(j)) {
+  for (i = 0; i < this->relScheme->attributes.size(); i++) {
+    for (j = 0; j < rel1.relScheme->attributes.size(); j++) {
+      string temp1 = this->relScheme->attributes.at(i);
+      string temp2 = rel1.relScheme->attributes.at(j);
+      if (temp1 == temp2) {
         common[i] = j;
+        notInclude.insert(j);
       }
     }
   }
-  newSch = new Scheme(name, att);
-  Relation* joined;
-  joined = new Relation(newSch);
+  for (i = 0; i < this->relScheme->attributes.size(); i++) {
+    att.push_back(this->relScheme->attributes.at(i));
+  }
+  for (i = 0; i < rel1.relScheme->attributes.size(); i++) {
+    if (notInclude.find(i) == notInclude.end()) {
+      att.push_back(rel1.relScheme->attributes.at(i));
+    }
+  }
+
+  delete this->relScheme;
+  this->relScheme = nullptr;
+  this->relScheme = new Scheme(newName, att);
   set<Tuple>::iterator it1;
   set<Tuple>::iterator it2;
   vector<string> newTup;
+  vector<Tuple*> newTuples;
   map<int, int>::iterator it;
   bool add;
-  if (common.size() == 0) {
-    for (it1 = rel1.tuples.begin(); it1 != rel1.tuples.end(); it1++) {
-      for (it2 = rel2.tuples.begin(); it2 != rel2.tuples.end(); it2++) {
+  if (notInclude.size() == 0) {
+    for (it1 = this->tuples.begin(); it1 != this->tuples.end(); it1++) {
+      for (it2 = rel1.tuples.begin(); it2 != rel1.tuples.end(); it2++) {
         for (i = 0; i < it1->elements.size(); i++) {
-          newTup.push_back(it1->elements.at(i));
+          string temp = it1->elements.at(i);
+          newTup.push_back(temp);
         }
         for (i = 0; i < it2->elements.size(); i++) {
-          newTup.push_back(it2->elements.at(i));
+          string temp = it2->elements.at(i);
+          if (notInclude.find(i) == notInclude.end()) {
+            newTup.push_back(temp);
+          }
         }
-        joined.tuples.insert(newTup);
+        Tuple* newTpl;
+        newTpl = new Tuple(newTup);
+        newTuples.push_back(newTpl);
+        newTup.clear();
       }
     }
   }
   else {
-    for (it1 = rel1.tuples.begin(); it1 != rel1.tuples.end(); it1++) {
-      for (it2 = rel2.tuples.begin(); it2 != rel2.tuples.end(); it2++) {
+    for (it1 = this->tuples.begin(); it1 != this->tuples.end(); it1++) {
+      for (it2 = rel1.tuples.begin(); it2 != rel1.tuples.end(); it2++) {
         add = true;
         for (it = common.begin(); it != common.end(); it++) {
           if (it1->elements.at(it->first) != it2->elements.at(it->second)) {
@@ -143,14 +158,22 @@ Relation Relation::Join(Relation rel1, Relation rel2) {
             newTup.push_back(it1->elements.at(i));
           }
           for (i = 0; i < it2->elements.size(); i++) {
-            newTup.push_back(it2->elements.at(i));
+            if (notInclude.find(i) == notInclude.end()) {
+              newTup.push_back(it2->elements.at(i));
+            }
           }
-          joined.tuples.insert(newTup);
+          Tuple* newTpl;
+          newTpl = new Tuple(newTup);
+          newTuples.push_back(newTpl);
+          newTup.clear();
         }
       }
     }
   }
-  return joined;
+  this->tuples.clear();
+  for (i = 0; i < newTuples.size(); i++) {
+    this->tuples.insert(*newTuples.at(i));
+  }
 }
 
 string Relation::ToString() {

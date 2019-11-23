@@ -13,6 +13,7 @@ protected:
   friend class Relation;
 public:
   Scheme(Predicate* predPtr);
+  Scheme(string name, vector<string> att);
   ~Scheme();
   string getName();
   string ToString();
