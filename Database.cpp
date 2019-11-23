@@ -9,6 +9,7 @@ using namespace std;
 #include "Relation.h"
 #include "Scheme.h"
 #include "Tokens.h"
+#include "Rule.h"
 
 Database::Database() {
 
@@ -112,8 +113,8 @@ void Database::EvalRule(Rule* rulePtr) {
     newRels.push_back(newRel);
   }
   //Join Predicates on RHS
-  for (i = 1; i < newRels.size(); i++) {
-    newRels.at(0).join(newRels.at(i));
+  for (unsigned int i = 1; i < newRels.size(); i++) {
+    newRels.at(0).Join(newRels.at(i));
   }
 
   //Manipulate intermediate relation to produce new rule

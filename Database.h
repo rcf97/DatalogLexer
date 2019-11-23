@@ -5,6 +5,7 @@ using namespace std;
 
 #include "Predicate.h"
 #include "Relation.h"
+#include "Rule.h"
 
 class Database {
 private:

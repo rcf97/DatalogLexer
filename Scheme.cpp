@@ -15,7 +15,7 @@ Scheme::Scheme(Predicate* predPtr) {
   }
 }
 
-Scheme::Scheme(string name, vector<string> att);
+Scheme::Scheme(string name, vector<string> att) {
   this->name = name;
   this->attributes = att;
 }
