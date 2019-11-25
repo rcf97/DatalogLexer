@@ -184,7 +184,7 @@ void Relation::Join(Relation* rel1) {
 }
 
 void Relation::Unite(Relation* relPtr) {
-  set<Tuple>::iterator it
+  set<Tuple>::iterator it;
   for (it = relPtr->tuples.begin(); it != relPtr->tuples.end(); it++) {
     this->tuples.insert(*it);
   }

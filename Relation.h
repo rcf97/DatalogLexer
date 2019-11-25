@@ -9,12 +9,12 @@ using namespace std;
 #include "Predicate.h"
 
 class Relation {
-protected:
+public:
   string name;
   Scheme relScheme;
   set<Tuple> tuples;
   friend class Database;
-public:
+  friend class DatalogProgram;
   Relation();
   Relation(Scheme* schemePtr);
   ~Relation();

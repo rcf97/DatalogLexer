@@ -9,6 +9,7 @@ protected:
   vector<string> elements;
   friend class Relation;
   friend class Database;
+  friend class DatalogProgram;
 public:
   Tuple(vector<string> elements);
   ~Tuple();

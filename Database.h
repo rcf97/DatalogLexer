@@ -10,6 +10,7 @@ using namespace std;
 class Database {
 private:
   map<string, Relation*> data;
+  friend class DatalogProgram;
 public:
   Database();
   ~Database();

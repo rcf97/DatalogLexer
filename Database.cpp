@@ -139,16 +139,18 @@ void Database::EvalRule(Rule* rulePtr) {
   cout << rulePtr->ToString() << endl;
   set<Tuple>::iterator ittup;
   for (ittup = newRels.at(0).tuples.begin(); ittup != newRels.at(0).tuples.end(); ittup++) {
-    for (i = 0; i < newRels.at(0).relScheme.attributes.size(); i++) {
-      if (i == 0) {cout << "  ";}
-      cout << newRels.at(0).relScheme.attributes.at(i) << "=" << ittup->elements.at(i);
-      if (i != newRels.at(0).relScheme.attributes.size() - 1) {cout << ", ";}
-      else {cout << endl;}
+    if (this->data[newRels.at(0).relScheme.name]->tuples.find(*ittup) == this->data[newRels.at(0).relScheme.name]->tuples.end()) {
+      for (i = 0; i < newRels.at(0).relScheme.attributes.size(); i++) {
+        if (i == 0) {cout << "  ";}
+        cout << newRels.at(0).relScheme.attributes.at(i) << "=" << ittup->elements.at(i);
+        if (i != newRels.at(0).relScheme.attributes.size() - 1) {cout << ", ";}
+        else {cout << endl;}
+      }
     }
   }
 
   //cout << newRels.at(0).ToString() << endl;
-  this->data[newRels.at(0).relScheme.name]->Unite(newRels.at(0));
+  this->data[newRels.at(0).relScheme.name]->Unite(&newRels.at(0));
 }
 
 void Database::EvalQuery(Predicate* predPtr) {
@@ -221,7 +223,6 @@ void Database::EvalQuery(Predicate* predPtr) {
   newRel.Rename(var);
 
   //OUTPUT QUERY
-  cout << "Query Evaluation" << endl;
   cout << predPtr->ToString() << "? ";
   if (newRel.tuples.size() == 0) {
     cout << "No" << endl;

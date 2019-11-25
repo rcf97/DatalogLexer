@@ -102,13 +102,32 @@ void DatalogProgram::ToDatabase() {
 void DatalogProgram::EvalRule() {
   unsigned int i;
   cout << "Rule Evaluation" << endl;
-  for (i = 1; i < this->rulesV.size(); i++) {
-    this->databasePtr->EvalRule(this->rulesV.at(i));
+  int additions = 1;
+  int precount = 0;
+  int postcount = 0;
+  int passes = 0;
+  map<string, Relation*>::iterator it;
+  while (additions != 0) {
+    precount = 0;
+    postcount = 0;
+    for (it = this->databasePtr->data.begin(); it != this->databasePtr->data.end(); it++) {
+      precount += it->second->tuples.size();
+    }
+    for (i = 1; i < this->rulesV.size(); i++) {
+      this->databasePtr->EvalRule(this->rulesV.at(i));
+    }
+    for (it = this->databasePtr->data.begin(); it != this->databasePtr->data.end(); it++) {
+      postcount += it->second->tuples.size();
+    }
+    passes++;
+    additions = postcount - precount;
   }
+  cout << endl << "Schemes populated after " << passes << " passes through the Rules." << endl << endl;
 }
 
 void DatalogProgram::EvalQuery() {
   unsigned int i;
+  cout << "Query Evaluation" << endl;
   for (i = 0; i < this->queriesV.size(); i++) {
     this->databasePtr->EvalQuery(this->queriesV.at(i));
   }
