@@ -39,8 +39,9 @@ void Database::ToString() {
 }
 
 void Database::EvalRule(Rule* rulePtr) {
-  Relation rel1, rel2, rel3, rel4, rel5;
-  vector<Relation> newRels{rel1, rel2, rel3, rel4, rel5};
+  Relation rel1, rel2, rel3, rel4, rel5, rel6, rel7, rel8, rel9, rel10;
+  vector<Relation> newRels{rel1, rel2, rel3, rel4, rel5, rel6, rel7, rel8,
+      rel9, rel10};
   for (unsigned int k = 0; k < rulePtr->predlist.size(); k++) {
     Predicate* predPtr = rulePtr->predlist.at(k);
     string schname = predPtr->getIdent();
@@ -149,7 +150,6 @@ void Database::EvalRule(Rule* rulePtr) {
     }
   }
 
-  //cout << newRels.at(0).ToString() << endl;
   this->data[newRels.at(0).relScheme.name]->Unite(&newRels.at(0));
 }
 
