@@ -39,14 +39,14 @@ void Database::ToString() {
 }
 
 void Database::EvalRule(Rule* rulePtr) {
-  vector<Relation> newRels;
+  Relation rel1, rel2, rel3, rel4, rel5;
+  vector<Relation> newRels{rel1, rel2, rel3, rel4, rel5};
   for (unsigned int k = 0; k < rulePtr->predlist.size(); k++) {
     Predicate* predPtr = rulePtr->predlist.at(k);
     string schname = predPtr->getIdent();
-    Scheme newSch = *this->data[schname]->relScheme;
-    Relation newRel = *this->data[schname];
-    newRel.relScheme = &newSch;
-    //cout << newRel.ToString() << endl;
+    newRels.at(k).name = schname;
+    newRels.at(k).tuples = this->data[schname]->tuples;
+    newRels.at(k).relScheme = this->data[schname]->relScheme;
     unsigned int i;
     int constPos1 = -1;
     string const1;
@@ -84,11 +84,11 @@ void Database::EvalRule(Rule* rulePtr) {
       }
     }
     if (constPos1 != -1) {
-      newRel.Select(constPos1, const1);
+      newRels.at(k).Select(constPos1, const1);
       if (constPos2 != -1) {
-        newRel.Select(constPos2, const2);
+        newRels.at(k).Select(constPos2, const2);
         if (constPos3 != -1) {
-          newRel.Select(constPos3, const3);
+          newRels.at(k).Select(constPos3, const3);
         }
       }
     }
@@ -97,7 +97,7 @@ void Database::EvalRule(Rule* rulePtr) {
     for (i = 0; i < var.size(); i++) {
       for (j = i; j < var.size(); j++) {
         if (i != j && var.at(i) == var.at(j)) {
-          newRel.Select(varPos.at(i), varPos.at(j));
+          newRels.at(k).Select(varPos.at(i), varPos.at(j));
           delList.push_back(j);
         }
       }
@@ -108,25 +108,52 @@ void Database::EvalRule(Rule* rulePtr) {
         var.erase(var.begin() + delList.at(i) - i);
       }
     }
-    newRel.Project(varPos);
-    newRel.Rename(var);
-    newRels.push_back(newRel);
+    newRels.at(k).Project(varPos);
+    newRels.at(k).Rename(var);
   }
+
   //Join Predicates on RHS
-  for (unsigned int i = 1; i < newRels.size(); i++) {
-    newRels.at(0).Join(newRels.at(i));
+  for (unsigned int i = 1; i < rulePtr->predlist.size(); i++) {
+    newRels.at(0).Join(&newRels.at(i));
   }
 
   //Manipulate intermediate relation to produce new rule
+  unsigned int i;
+  unsigned int j;
+  vector<int> projPos;
+  for (i = 0; i < rulePtr->head->paramlist.size(); i++) {
+    for (j = 0; j < newRels.at(0).relScheme.attributes.size(); j++) {
+      if (rulePtr->head->paramlist.at(i)->value == newRels.at(0).relScheme.attributes.at(j)) {
+        projPos.push_back(j);
+      }
+    }
+  }
+  newRels.at(0).Project(projPos);
+  newRels.at(0).relScheme.name = rulePtr->head->ident;
 
+  //Union process
+  //Make compatible
+  newRels.at(0).Rename(this->data[newRels.at(0).relScheme.name]->relScheme.attributes);
+
+  //Output new tuples
+  cout << rulePtr->ToString() << endl;
+  set<Tuple>::iterator ittup;
+  for (ittup = newRels.at(0).tuples.begin(); ittup != newRels.at(0).tuples.end(); ittup++) {
+    for (i = 0; i < newRels.at(0).RelScheme.attributes.size(); i++) {
+      if (i == 0) {cout << "  ";}
+      cout << newRels.at(0).RelScheme.attributes.at(i) << "=";
+    }
+  }
+
+  //cout << newRels.at(0).ToString() << endl;
+  this->data[newRels.at(0).relScheme.name]->Unite(newRels.at(0));
 }
 
 void Database::EvalQuery(Predicate* predPtr) {
   string schname = predPtr->getIdent();
-  Scheme newSch = *this->data[schname]->relScheme;
+  Scheme newSch = this->data[schname]->relScheme;
   Relation newRel = *this->data[schname];
-  newRel.relScheme = &newSch;
-  //cout << newRel.ToString() << endl;
+  newRel.relScheme = newSch;
   unsigned int i;
   int constPos1 = -1;
   string const1;
@@ -190,9 +217,9 @@ void Database::EvalQuery(Predicate* predPtr) {
   }
   newRel.Project(varPos);
   newRel.Rename(var);
-  //cout << "orig." << this->data[newRel.name]->ToString() << endl;
 
   //OUTPUT QUERY
+  cout << "Query Evaluation" << endl;
   cout << predPtr->ToString() << "? ";
   if (newRel.tuples.size() == 0) {
     cout << "No" << endl;

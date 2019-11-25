@@ -11,17 +11,19 @@ using namespace std;
 class Relation {
 protected:
   string name;
-  Scheme* relScheme;
+  Scheme relScheme;
   set<Tuple> tuples;
   friend class Database;
 public:
+  Relation();
   Relation(Scheme* schemePtr);
   ~Relation();
   void Select(int pos, string val);
   void Select(int pos1, int pos2);
   void Project(vector<int> pos);
   void Rename(vector<string> var);
-  void Join(Relation rel1);
+  void Join(Relation* rel1);
+  void Unite(Relation* relPtr);
   void AddFact(Predicate* predPtr);
-  string ToString();
+  string ToString() const;
 };

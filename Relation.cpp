@@ -11,9 +11,15 @@ using namespace std;
 #include "Predicate.h"
 #include "Tuple.h"
 
+Relation::Relation() {
+  this->name = "";
+  Scheme newSch;
+  this->relScheme = newSch;
+}
+
 Relation::Relation(Scheme* schemePtr) {
   this->name = schemePtr->getName();
-  this->relScheme = schemePtr;
+  this->relScheme = *schemePtr;
 }
 
 Relation::~Relation() {
@@ -63,9 +69,9 @@ void Relation::Project(vector<int> pos) {
   unsigned int i;
   vector<string> newAt;
   for (i = 0; i < pos.size(); i++) {
-    newAt.push_back(this->relScheme->attributes.at(pos.at(i)));
+    newAt.push_back(this->relScheme.attributes.at(pos.at(i)));
   }
-  this->relScheme->attributes = newAt;
+  this->relScheme.attributes = newAt;
   set<Tuple>::iterator it;
   set<Tuple> newSet;
   for (it = this->tuples.begin(); it != this->tuples.end(); it++) {
@@ -84,40 +90,40 @@ void Relation::Project(vector<int> pos) {
 void Relation::Rename(vector<string> var) {
   unsigned int i;
   for (i = 0; i < var.size(); i++) {
-    this->relScheme->attributes.at(i) = var.at(i);
+    this->relScheme.attributes.at(i) = var.at(i);
   }
   //cout << this->ToString() << endl << endl;
 }
 
-void Relation::Join(Relation rel1) {
-  string newName = this->name + rel1.name;
+void Relation::Join(Relation* rel1) {
+  string newName = this->name + rel1->name;
   vector<string> att;
   unsigned int i;
   unsigned int j;
   set<int> notInclude;
   map<int, int> common;
-  for (i = 0; i < this->relScheme->attributes.size(); i++) {
-    for (j = 0; j < rel1.relScheme->attributes.size(); j++) {
-      string temp1 = this->relScheme->attributes.at(i);
-      string temp2 = rel1.relScheme->attributes.at(j);
+  for (i = 0; i < this->relScheme.attributes.size(); i++) {
+    for (j = 0; j < rel1->relScheme.attributes.size(); j++) {
+      string temp1 = this->relScheme.attributes.at(i);
+      string temp2 = rel1->relScheme.attributes.at(j);
       if (temp1 == temp2) {
         common[i] = j;
         notInclude.insert(j);
       }
     }
   }
-  for (i = 0; i < this->relScheme->attributes.size(); i++) {
-    att.push_back(this->relScheme->attributes.at(i));
+  for (i = 0; i < this->relScheme.attributes.size(); i++) {
+    att.push_back(this->relScheme.attributes.at(i));
   }
-  for (i = 0; i < rel1.relScheme->attributes.size(); i++) {
+  for (i = 0; i < rel1->relScheme.attributes.size(); i++) {
     if (notInclude.find(i) == notInclude.end()) {
-      att.push_back(rel1.relScheme->attributes.at(i));
+      att.push_back(rel1->relScheme.attributes.at(i));
     }
   }
 
-  delete this->relScheme;
-  this->relScheme = nullptr;
-  this->relScheme = new Scheme(newName, att);
+  Scheme* newSch;
+  newSch = new Scheme(newName, att);
+  this->relScheme = *newSch;
   set<Tuple>::iterator it1;
   set<Tuple>::iterator it2;
   vector<string> newTup;
@@ -126,7 +132,7 @@ void Relation::Join(Relation rel1) {
   bool add;
   if (notInclude.size() == 0) {
     for (it1 = this->tuples.begin(); it1 != this->tuples.end(); it1++) {
-      for (it2 = rel1.tuples.begin(); it2 != rel1.tuples.end(); it2++) {
+      for (it2 = rel1->tuples.begin(); it2 != rel1->tuples.end(); it2++) {
         for (i = 0; i < it1->elements.size(); i++) {
           string temp = it1->elements.at(i);
           newTup.push_back(temp);
@@ -146,7 +152,7 @@ void Relation::Join(Relation rel1) {
   }
   else {
     for (it1 = this->tuples.begin(); it1 != this->tuples.end(); it1++) {
-      for (it2 = rel1.tuples.begin(); it2 != rel1.tuples.end(); it2++) {
+      for (it2 = rel1->tuples.begin(); it2 != rel1->tuples.end(); it2++) {
         add = true;
         for (it = common.begin(); it != common.end(); it++) {
           if (it1->elements.at(it->first) != it2->elements.at(it->second)) {
@@ -170,15 +176,20 @@ void Relation::Join(Relation rel1) {
       }
     }
   }
+
   this->tuples.clear();
   for (i = 0; i < newTuples.size(); i++) {
     this->tuples.insert(*newTuples.at(i));
   }
 }
 
-string Relation::ToString() {
+void Relation::Unite(Relation* relPtr) {
+
+}
+
+string Relation::ToString() const {
   string output = "";
-  output += this->relScheme->ToString();
+  output += this->relScheme.ToString();
   //output += "\n";
   set<Tuple>::iterator it;
   for (it = tuples.begin(); it != tuples.end(); it++) {

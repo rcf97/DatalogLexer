@@ -7,6 +7,10 @@ using namespace std;
 #include "Predicate.h"
 #include "Parameter.h"
 
+Scheme::Scheme() {
+
+}
+
 Scheme::Scheme(Predicate* predPtr) {
   this->name = predPtr->getIdent();
   unsigned int i;
@@ -28,7 +32,7 @@ string Scheme::getName() {
   return this->name;
 }
 
-string Scheme::ToString() {
+string Scheme::ToString() const {
   string output = "";
   output += this->name;
   output += "(";

@@ -10,6 +10,7 @@ protected:
   string value;
   friend class Parser;
   friend class DatalogProgram;
+  friend class Database;
 public:
   Parameter();
   virtual string ToString() = 0;

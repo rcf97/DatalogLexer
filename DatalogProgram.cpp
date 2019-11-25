@@ -20,6 +20,7 @@ DatalogProgram::DatalogProgram(string fileName) {
     this->FixRules();
     //this->ToString();
     this->ToDatabase();
+    this->EvalRule();
     //this->databasePtr->ToString();
     this->EvalQuery();
   }
@@ -100,7 +101,8 @@ void DatalogProgram::ToDatabase() {
 
 void DatalogProgram::EvalRule() {
   unsigned int i;
-  for (i=0; i < this->rulesV.size(); i++) {
+  cout << "Rule Evaluation" << endl;
+  for (i = 1; i < this->rulesV.size(); i++) {
     this->databasePtr->EvalRule(this->rulesV.at(i));
   }
 }
