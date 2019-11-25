@@ -131,7 +131,7 @@ void Database::EvalRule(Rule* rulePtr) {
   newRels.at(0).Project(projPos);
   newRels.at(0).relScheme.name = rulePtr->head->ident;
 
-  //Union process
+  //UNION PROCESS
   //Make compatible
   newRels.at(0).Rename(this->data[newRels.at(0).relScheme.name]->relScheme.attributes);
 
@@ -139,9 +139,11 @@ void Database::EvalRule(Rule* rulePtr) {
   cout << rulePtr->ToString() << endl;
   set<Tuple>::iterator ittup;
   for (ittup = newRels.at(0).tuples.begin(); ittup != newRels.at(0).tuples.end(); ittup++) {
-    for (i = 0; i < newRels.at(0).RelScheme.attributes.size(); i++) {
+    for (i = 0; i < newRels.at(0).relScheme.attributes.size(); i++) {
       if (i == 0) {cout << "  ";}
-      cout << newRels.at(0).RelScheme.attributes.at(i) << "=";
+      cout << newRels.at(0).relScheme.attributes.at(i) << "=" << ittup->elements.at(i);
+      if (i != newRels.at(0).relScheme.attributes.size() - 1) {cout << ", ";}
+      else {cout << endl;}
     }
   }
 
