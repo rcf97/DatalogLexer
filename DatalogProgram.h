@@ -22,6 +22,7 @@ private:
   vector<Predicate*> queriesV;
   set<string> domain;
   Database* databasePtr;
+  Graph* ruleGraphPtr;
   friend class Parser;
 public:
   DatalogProgram(string fileName);

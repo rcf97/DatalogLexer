@@ -100,7 +100,8 @@ void DatalogProgram::ToDatabase() {
 }
 
 void DatalogProgram::EvalRule() {
-  unsigned int i;
+  //Brute force algorithm
+  /*unsigned int i;
   cout << "Rule Evaluation" << endl;
   int additions = 1;
   int precount = 0;
@@ -122,7 +123,10 @@ void DatalogProgram::EvalRule() {
     passes++;
     additions = postcount - precount;
   }
-  cout << endl << "Schemes populated after " << passes << " passes through the Rules." << endl << endl;
+  cout << endl << "Schemes populated after " << passes << " passes through the Rules." << endl << endl;*/
+
+  //Efficient algorithm
+
 }
 
 void DatalogProgram::EvalQuery() {
