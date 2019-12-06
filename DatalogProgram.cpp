@@ -126,6 +126,8 @@ void DatalogProgram::EvalRule() {
   cout << endl << "Schemes populated after " << passes << " passes through the Rules." << endl << endl;*/
 
   //Efficient algorithm
+  Graph* graphPtr;
+  graphPtr = new Graph(this->rulesV);
 
 }
 

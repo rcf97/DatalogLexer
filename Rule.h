@@ -10,6 +10,7 @@ protected:
   Predicate* head;
   vector<Predicate*> predlist;
   friend class Database;
+  friend class Graph;
 public:
   Rule(Predicate* head);
   void addPred(Predicate* add);

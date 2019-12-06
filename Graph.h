@@ -1,15 +1,16 @@
 #pragma once
 #include <map>
+#include <vector>
 using namespace std;
 
 #include "Node.h"
-#include "Rules.h"
+#include "Rule.h"
 
 class Graph {
 private:
   vector<Rule*> rules;
   map<int, Node> graph;
 public:
-  Graph();
+  Graph(vector<Rule*> rules);
   ~Graph();
 };
