@@ -7,6 +7,6 @@ public:
   set<ints> successors;
   bool visited = false;
   int postOrder;
-  Node();
-  ~Node();
+  Node() {}
+  ~Node() {}
 };
