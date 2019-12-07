@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <stack>
 using namespace std;
 
 #include "Graph.h"
@@ -23,8 +24,8 @@ Graph::Graph(vector<Rule*> rules) {
     for (k = 0; k < this->rules.at(i)->predlist.size(); k++) {
       for (j = 0; j < this->rules.size(); j++) {
         if (this->rules.at(j)->head->ident == this->rules.at(i)->predlist.at(k)->ident) {
-          this->graph[i]->successors.insert(j);
-          this->revGraph[j]->successors.insert(i);
+          this->graph[i].successors.insert(j);
+          this->revGraph[j].successors.insert(i);
         }
       }
     }
@@ -49,7 +50,15 @@ string Graph::ToString() {
       output += to_string(*sit);
       output += ",";
     }
-    output.pop_back();
+    if (output.back() == ',') {
+      output.pop_back();
+    }
     output += "\n";
   }
+  return output;
+}
+
+void Graph::DFS() {
+  stack<Node*> myStack;
+  
 }

@@ -4,7 +4,7 @@ using namespace std;
 
 class Node {
 public:
-  set<ints> successors;
+  set<int> successors;
   bool visited = false;
   int postOrder;
   Node() {}

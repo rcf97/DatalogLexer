@@ -8,6 +8,7 @@ using namespace std;
 #include "DatalogProgram.h"
 #include "Rule.h"
 #include "Database.h"
+#include "Graph.h"
 
 DatalogProgram::DatalogProgram(string fileName) {
   this->scnPtr = new Scanner(fileName);
@@ -125,10 +126,11 @@ void DatalogProgram::EvalRule() {
   }
   cout << endl << "Schemes populated after " << passes << " passes through the Rules." << endl << endl;*/
 
-  //Efficient algorithm
+  //Efficient algorithm - Strongly Connected Components
   Graph* graphPtr;
   graphPtr = new Graph(this->rulesV);
-
+  this->ruleGraphPtr = graphPtr;
+  cout << this->ruleGraphPtr->ToString() << endl;
 }
 
 void DatalogProgram::EvalQuery() {

@@ -9,6 +9,7 @@ using namespace std;
 #include "Predicate.h"
 #include "Rule.h"
 #include "Database.h"
+#include "Graph.h"
 
 class DatalogProgram {
 private:

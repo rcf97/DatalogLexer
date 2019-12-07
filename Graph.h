@@ -16,4 +16,5 @@ public:
   Graph(vector<Rule*> rules);
   ~Graph();
   string ToString();
+  void DFS();
 };

@@ -13,6 +13,7 @@ protected:
   friend class Scheme;
   friend class Relation;
   friend class Database;
+  friend class Graph;
 public:
   Predicate(string ident);
   string ToString();
