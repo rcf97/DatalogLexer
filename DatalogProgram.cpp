@@ -137,11 +137,15 @@ void DatalogProgram::EvalRule() {
   cout << "Rule Evaluation" << endl;
 
   unsigned int i;
+  set<int>::iterator it;
   bool flag = false;
   for (i = 0; i < sccs.size(); i++) {
     flag = false;
     if (sccs.at(i).size() == 1) {
-      flag = !this->ruleGraphPtr->Depends(i);
+      it = sccs.at(i).begin();
+      if (!this->ruleGraphPtr->Depends(*it)) {
+        flag = true;
+      }
     }
     this->FixedPoint(sccs.at(i), flag);
   }
