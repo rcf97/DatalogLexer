@@ -33,4 +33,5 @@ public:
   void ToDatabase();
   void EvalRule();
   void EvalQuery();
+  void FixedPoint(set<int> scc, bool flag);
 };

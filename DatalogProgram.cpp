@@ -131,6 +131,60 @@ void DatalogProgram::EvalRule() {
   graphPtr = new Graph(this->rulesV);
   this->ruleGraphPtr = graphPtr;
   cout << this->ruleGraphPtr->ToString() << endl;
+  vector<set<int>> sccs = this->ruleGraphPtr->SCC();
+  //cout << this->ruleGraphPtr->SCCToString(sccs) << endl;
+
+  cout << "Rule Evaluation" << endl;
+
+  unsigned int i;
+  bool flag = false;
+  for (i = 0; i < sccs.size(); i++) {
+    flag = false;
+    if (sccs.at(i).size() == 1) {
+      flag = !this->ruleGraphPtr->Depends(i);
+    }
+    this->FixedPoint(sccs.at(i), flag);
+  }
+  cout << endl;
+}
+
+void DatalogProgram::FixedPoint(set<int> scc, bool flag) {
+  cout << "SCC: ";
+  set<int>::iterator sit;
+  string output = "";
+  for (sit = scc.begin(); sit != scc.end(); sit++) {
+    output += "R";
+    output += to_string(*sit);
+    output += ",";
+  }
+  if (output.back() == ',') {
+    output.pop_back();
+  }
+  cout << output << endl;
+  int additions = 1;
+  int precount = 0;
+  int postcount = 0;
+  int passes = 0;
+  map<string, Relation*>::iterator it;
+  while (additions != 0) {
+    precount = 0;
+    postcount = 0;
+    for (it = this->databasePtr->data.begin(); it != this->databasePtr->data.end(); it++) {
+      precount += it->second->tuples.size();
+    }
+    for (sit = scc.begin(); sit != scc.end(); sit++) {
+      this->databasePtr->EvalRule(this->rulesV.at(*sit + 1));
+    }
+    for (it = this->databasePtr->data.begin(); it != this->databasePtr->data.end(); it++) {
+      postcount += it->second->tuples.size();
+    }
+    passes++;
+    additions = postcount - precount;
+    if (flag) {
+      break;
+    }
+  }
+  cout << passes << " passes: " << output << endl;
 }
 
 void DatalogProgram::EvalQuery() {
